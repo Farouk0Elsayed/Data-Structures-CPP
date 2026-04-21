@@ -51,23 +51,26 @@ void CircularLinkedList<data_type>::insertNode(data_type value)
 {
     Node<data_type> *New_node = new Node<data_type>, *curr = NULL, *prev = NULL;
     New_node->data = value;
-    New_node->next = nullptr;
+
     if (rear == NULL)
     {
         rear = New_node;
         rear->next = rear;
         return;
     }
-    prev = rear, curr = rear->next;
+    prev = rear;
+    curr = rear->next;
     do
     {
         if (value <= curr->data)
             break;
         prev = curr;
         curr = curr->next;
-    } while (curr != rear);
+    } while (curr != rear->next);
+
     New_node->next = curr;
     prev->next = New_node;
+
     if (value >= rear->data)
         rear = New_node;
 }
