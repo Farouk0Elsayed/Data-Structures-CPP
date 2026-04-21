@@ -35,12 +35,12 @@ CircularLinkedList<data_type>::~CircularLinkedList()
 {
     if (rear == NULL)
         return;
-    Node<data_type> *curr = rear->next, *Next_node;
+    Node<data_type> *curr = rear->next;
     while (curr != rear)
     {
-        Next_node = curr->next;
-        delete curr;
-        curr = Next_node;
+        Node<data_type> *temp = curr;
+        curr = curr->next;
+        delete temp;
     }
     delete rear;
     rear = NULL;
@@ -49,17 +49,15 @@ CircularLinkedList<data_type>::~CircularLinkedList()
 template <typename data_type>
 void CircularLinkedList<data_type>::insertNode(data_type value)
 {
-    Node<data_type> *New_node = new Node<data_type>, *curr = NULL, *prev = NULL;
+    Node<data_type> *New_node = new Node<data_type>;
     New_node->data = value;
-
     if (rear == NULL)
     {
         rear = New_node;
         rear->next = rear;
         return;
     }
-    prev = rear;
-    curr = rear->next;
+    Node<data_type> *prev = rear, *curr = rear->next;
     do
     {
         if (value <= curr->data)
@@ -70,7 +68,6 @@ void CircularLinkedList<data_type>::insertNode(data_type value)
 
     New_node->next = curr;
     prev->next = New_node;
-
     if (value >= rear->data)
         rear = New_node;
 }
@@ -80,24 +77,34 @@ void CircularLinkedList<data_type>::deleteNode(data_type value)
 {
     if (rear == NULL)
         return void(cout << "The Circular is empty\n");
+
     Node<data_type> *curr = rear->next, *prev = rear;
+    bool found = false;
     do
     {
-        if (value <= curr->data)
+        if (curr->data == value)
+        {
+            found = true;
+            break;
+        }
+        if (curr->data > value)
             break;
         prev = curr;
         curr = curr->next;
-    } while (curr != rear);
+    } while (curr != rear->next);
 
-    if (curr->data != value)
+    if (!found)
         return void(cout << "Item not found\n");
+
     if (curr == prev)
+    {
         rear = NULL;
+    }
     else
     {
+        prev->next = curr->next;
         if (curr == rear)
             rear = prev;
-        prev->next = curr->next;
     }
     delete curr;
 }
@@ -111,16 +118,11 @@ bool CircularLinkedList<data_type>::IsEmpty() const
 template <typename data_type>
 bool CircularLinkedList<data_type>::IsFull() const
 {
-    try
-    {
-        Node<data_type> *New = new Node<data_type>;
-        delete New;
-        return false;
-    }
-    catch (const std::exception &e)
-    {
+    Node<data_type> *temp = new (nothrow) Node<data_type>;
+    if (temp == NULL)
         return true;
-    }
+    delete temp;
+    return false;
 }
 
 template <typename data_type>
@@ -128,13 +130,14 @@ void CircularLinkedList<data_type>::print()
 {
     if (IsEmpty())
         return void(cout << "The Circular is Empty\n");
+
     Node<data_type> *curr = rear->next;
-    while (curr != rear)
+    do
     {
         cout << curr->data << " ";
         curr = curr->next;
-    }
-    cout << rear->data;
+    } while (curr != rear->next);
+    cout << endl;
 }
 
 template <typename data_type>
@@ -145,9 +148,8 @@ int CircularLinkedList<data_type>::countNodes()
         cout << "The Circular is Empty\n";
         return 0;
     }
-    Node<data_type> *curr = rear->next;
-
     int cnt = 0;
+    Node<data_type> *curr = rear->next;
     do
     {
         cnt++;
