@@ -24,7 +24,7 @@ public:
     bool isEmpty() const;
     Node<data_type>* searchNode(const data_type& item) const;
     void insertNode(const data_type& item);
-    void deleteNode(data_type item);
+    void deleteNode(const data_type& item);
     void print() const;
     void printReversed() const;
     int countNodes() const;
@@ -66,38 +66,33 @@ template <typename data_type>
 Node<data_type> *DoublyLinkedList<data_type>::searchNode(const data_type& item) const
 {
     Node<data_type> *curr = head->next;
-
     while (curr != head)
     {
         if (curr->data == item)
             return curr;
-        if ((curr->data) < item)
-            curr = curr->next;
-        else
+        if (curr->data > item)
             break;
+        curr = curr->next;
     }
-
     return NULL;
 }
 
 template <typename data_type>
 void DoublyLinkedList<data_type>::insertNode(const data_type& item)
 {
-    Node<data_type> *New = new Node<data_type>, *curr = NULL;
+    Node<data_type> *New = new Node<data_type>, *curr = head->next;
     New->data = item;
-    curr = head->next;
     while (curr != head)
     {
-        if ((curr->data) < item)
+        if (curr->data < item)
             curr = curr->next;
         else
             break;
     }
-
     New->next = curr;
     New->prev = curr->prev;
+    curr->prev->next = New;
     curr->prev = New;
-    (New->prev)->next = New;
 }
 
 template <typename data_type>
@@ -110,14 +105,18 @@ void DoublyLinkedList<data_type>::deleteNode(const data_type& item)
         curr->next->prev = curr->prev;
         delete curr;
     }
-    else {
-        cout << "Item not found, cannot delete.\n";
+    else
+    {
+        return void(cout << "Item not found, cannot delete.\n");
     }
 }
 
 template <typename data_type>
 void DoublyLinkedList<data_type>::print() const
 {
+    if (isEmpty())
+        return void(cout << "List is empty\n");
+
     Node<data_type> *curr = head->next;
     while (curr != head)
     {
@@ -130,6 +129,9 @@ void DoublyLinkedList<data_type>::print() const
 template <typename data_type>
 void DoublyLinkedList<data_type>::printReversed() const
 {
+    if (isEmpty())
+        return void(cout << "List is empty\n");
+
     Node<data_type> *curr = head->prev;
     while (curr != head)
     {
