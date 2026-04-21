@@ -6,7 +6,6 @@ using namespace std;
 template <typename data_type>
 struct Node
 {
-public:
     data_type data;
     Node *next = nullptr, *prev = nullptr;
 };
